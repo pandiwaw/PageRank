@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="hadoop-dist-2.6.0">
+    <CLASSES>
+      <root url="jar://D:/App/hadoop-dist-2.6.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
