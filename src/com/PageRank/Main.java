@@ -1,13 +1,20 @@
-package com.pagerank;
+package com.PageRank;
 
-import com.graphParser.firstJobReducer;
+import com.CalculationRank.SecondJobMapper;
+import com.CalculationRank.SecondJobReducer;
+import com.GraphParser.FirstJobMapper;
+import com.GraphParser.FirstJobReducer;
+import com.RankOrder.ThirdJobMapper;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -135,6 +142,18 @@ public class Main {
         System.exit(0);
     }
 
+    /**
+     * This will run Job #1 (Graph Parsing)
+     * Will parse the graph given as input and initialize the page rank.
+     *
+     * @param input         the directory of the input data
+     * @param output        the main directory of the output
+     * @return
+     * @throws IOException
+     * @throws ClassNotFoundException
+     * @throws InterruptedException
+     */
+
     public boolean parseGraph(String input, String output) throws IOException, ClassNotFoundException, InterruptedException {
         Job job = Job.getInstance(new Configuration(), "Job #1");
         job.setJarByClass(Main.class);
@@ -144,16 +163,82 @@ public class Main {
         job.setInputFormatClass(TextInputFormat.class);
         job.setMapOutputKeyClass(Text.class);
         job.setMapOutputValueClass(Text.class);
-        job.setReducerClass(firstJobReducer.class);
-        return false;
+        job.setMapperClass(FirstJobMapper.class);
+
+        // otuput / reducer
+        FileOutputFormat.setOutputPath(job, new Path(output));
+        job.setOutputFormatClass(TextOutputFormat.class);
+        job.setOutputKeyClass(Text.class);
+        job.setOutputValueClass(Text.class);
+        job.setReducerClass(FirstJobReducer.class);
+
+        return job.waitForCompletion(true);
     }
+
+    /**
+     * This will run Job #2 (Rank Calculation).
+     * It calculates the new ranking and generates the same output format as the input,
+     * so this job can run multiple times (more iterations will increase accuracy).
+     *
+     * @param input         the directory of the input data
+     * @param output        the main directory of the output
+     * @return
+     * @throws IOException
+     * @throws ClassNotFoundException
+     * @throws InterruptedException
+     */
 
     public boolean calculateRank(String input, String output) throws IOException, ClassNotFoundException, InterruptedException {
-        return false;
+        Job job = Job.getInstance(new Configuration(), "Job #2");
+        job.setJarByClass(Main.class);
+
+        // input / mapper
+        FileInputFormat.setInputPaths(job, new Path(input));
+        job.setInputFormatClass(TextInputFormat.class);
+        job.setMapOutputKeyClass(Text.class);
+        job.setMapOutputValueClass(Text.class);
+        job.setMapperClass(SecondJobMapper.class);
+
+        // output / reducer
+        FileOutputFormat.setOutputPath(job, new Path(output));
+        job.setOutputFormatClass(TextOutputFormat.class);
+        job.setOutputKeyClass(Text.class);
+        job.setOutputValueClass(Text.class);
+        job.setReducerClass(SecondJobReducer.class);
+
+        return job.waitForCompletion(true);
     }
 
+    /**
+     * This will run the Job #3 (Rank Ordering)
+     * It will sort documents according to their page rank value.
+     *
+     * @param input         the directory of the input data
+     * @param output        the main directory of the output
+     * @return
+     * @throws IOException
+     * @throws ClassNotFoundException
+     * @throws InterruptedException
+     */
+
     public boolean orderRank(String input, String output) throws IOException, ClassNotFoundException, InterruptedException {
-        return false;
+        Job job = Job.getInstance(new Configuration(), "Job #3");
+        job.setJarByClass(Main.class);
+
+        // input / mapper
+        FileInputFormat.setInputPaths(job, new Path(input));
+        job.setInputFormatClass(TextInputFormat.class);
+        job.setMapOutputKeyClass(DoubleWritable.class);
+        job.setMapOutputValueClass(Text.class);
+        job.setMapperClass(ThirdJobMapper.class);
+
+        // output
+        FileOutputFormat.setOutputPath(job, new Path(output));
+        job.setOutputFormatClass(TextOutputFormat.class);
+        job.setOutputKeyClass(DoubleWritable.class);
+        job.setOutputValueClass(Text.class);
+
+        return job.waitForCompletion(true);
     }
 
     /**

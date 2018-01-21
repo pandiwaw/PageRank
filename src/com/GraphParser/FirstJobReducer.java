@@ -1,12 +1,12 @@
-package com.graphParser;
+package com.GraphParser;
 
-import com.pagerank.Main;
+import com.PageRank.Main;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
 import java.io.IOException;
 
-public class firstJobReducer extends Reducer<Text, Text, Text, Text> {
+public class FirstJobReducer extends Reducer<Text, Text, Text, Text> {
 
     /**
      * First Job Reducer will scroll all the nodes pointed by the given "key" node, constructing a comma

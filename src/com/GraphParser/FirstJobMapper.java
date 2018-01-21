@@ -1,15 +1,16 @@
-package com.graphParser;
+package com.GraphParser;
 
-import com.pagerank.Main;
+import com.PageRank.Main;
+import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 
 import java.io.IOException;
 
-public class firstJobMapper extends Mapper<Text, Text, Text, Text> {
+public class FirstJobMapper extends Mapper<LongWritable, Text, Text, Text> {
 
     /**
-     * firstJobMapper will simply parse a line of the input graph creating a map with key-value(s) pairs.
+     * FirstJobMapper will simply parse a line of the input graph creating a map with key-value(s) pairs.
      * Input format is the following (separator is TAB):
      *
      *      <nodeA>     <nodeB>
@@ -27,7 +28,7 @@ public class firstJobMapper extends Mapper<Text, Text, Text, Text> {
      */
 
     @Override
-    protected void map(Text key, Text value, Context context) throws IOException, InterruptedException {
+    protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
         if(value.charAt(0) != '#') {
             int tabIndex = value.find("\t");
             String nodeA = Text.decode(value.getBytes(), 0, tabIndex);
