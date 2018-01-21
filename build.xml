@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="pagerank" default="all">
+  
+  
+  <property file="build.properties"/>
+  <!-- Uncomment the following property if no tests compilation is needed -->
+  <!-- 
+  <property name="skip.tests" value="true"/>
+   -->
+  
+  <!-- Compiler options -->
+  
+  <property name="compiler.debug" value="on"/>
+  <property name="compiler.generate.no.warnings" value="off"/>
+  <property name="compiler.args" value=""/>
+  <property name="compiler.max.memory" value="700m"/>
+  <patternset id="ignored.files">
+    <exclude name="**/*.hprof/**"/>
+    <exclude name="**/*.pyc/**"/>
+    <exclude name="**/*.pyo/**"/>
+    <exclude name="**/*.rbc/**"/>
+    <exclude name="**/*.yarb/**"/>
+    <exclude name="**/*~/**"/>
+    <exclude name="**/.DS_Store/**"/>
+    <exclude name="**/.git/**"/>
+    <exclude name="**/.hg/**"/>
+    <exclude name="**/.svn/**"/>
+    <exclude name="**/CVS/**"/>
+    <exclude name="**/__pycache__/**"/>
+    <exclude name="**/_svn/**"/>
+    <exclude name="**/vssver.scc/**"/>
+    <exclude name="**/vssver2.scc/**"/>
+  </patternset>
+  <patternset id="library.patterns">
+    <include name="*.egg"/>
+    <include name="*.jar"/>
+    <include name="*.ear"/>
+    <include name="*.swc"/>
+    <include name="*.war"/>
+    <include name="*.zip"/>
+    <include name="*.ane"/>
+  </patternset>
+  <patternset id="compiler.resources">
+    <exclude name="**/?*.java"/>
+    <exclude name="**/?*.form"/>
+    <exclude name="**/?*.class"/>
+    <exclude name="**/?*.groovy"/>
+    <exclude name="**/?*.scala"/>
+    <exclude name="**/?*.flex"/>
+    <exclude name="**/?*.kt"/>
+    <exclude name="**/?*.clj"/>
+    <exclude name="**/?*.aj"/>
+  </patternset>
+  
+  <!-- JDK definitions -->
+  
+  <property name="jdk.bin.1.8" value="${jdk.home.1.8}/bin"/>
+  <path id="jdk.classpath.1.8">
+    <fileset dir="${jdk.home.1.8}">
+      <include name="jre/lib/charsets.jar"/>
+      <include name="jre/lib/deploy.jar"/>
+      <include name="jre/lib/ext/access-bridge-64.jar"/>
+      <include name="jre/lib/ext/cldrdata.jar"/>
+      <include name="jre/lib/ext/commons-codec-1.10.jar"/>
+      <include name="jre/lib/ext/dnsns.jar"/>
+      <include name="jre/lib/ext/jaccess.jar"/>
+      <include name="jre/lib/ext/jfxrt.jar"/>
+      <include name="jre/lib/ext/localedata.jar"/>
+      <include name="jre/lib/ext/nashorn.jar"/>
+      <include name="jre/lib/ext/sunec.jar"/>
+      <include name="jre/lib/ext/sunjce_provider.jar"/>
+      <include name="jre/lib/ext/sunmscapi.jar"/>
+      <include name="jre/lib/ext/sunpkcs11.jar"/>
+      <include name="jre/lib/ext/zipfs.jar"/>
+      <include name="jre/lib/javaws.jar"/>
+      <include name="jre/lib/jce.jar"/>
+      <include name="jre/lib/jfr.jar"/>
+      <include name="jre/lib/jfxswt.jar"/>
+      <include name="jre/lib/jsse.jar"/>
+      <include name="jre/lib/management-agent.jar"/>
+      <include name="jre/lib/plugin.jar"/>
+      <include name="jre/lib/resources.jar"/>
+      <include name="jre/lib/rt.jar"/>
+    </fileset>
+  </path>
+  
+  <property name="project.jdk.home" value="${jdk.home.1.8}"/>
+  <property name="project.jdk.bin" value="${jdk.bin.1.8}"/>
+  <property name="project.jdk.classpath" value="jdk.classpath.1.8"/>
+  
+  
+  <!-- Global Libraries -->
+  <!-- Register Custom Compiler Taskdefs -->
+  <property name="javac2.home" value="${idea.home}/lib"/>
+  <path id="javac2.classpath">
+    <pathelement location="${javac2.home}/javac2.jar"/>
+    <pathelement location="${javac2.home}/jdom.jar"/>
+    <pathelement location="${javac2.home}/asm-all.jar"/>
+    <pathelement location="${javac2.home}/jgoodies-forms.jar"/>
+  </path>
+  <target name="register.custom.compilers">
+    <taskdef name="javac2" classname="com.intellij.ant.Javac2" classpathref="javac2.classpath"/>
+    <taskdef name="instrumentIdeaExtensions" classname="com.intellij.ant.InstrumentIdeaExtensions" classpathref="javac2.classpath"/>
+  </target>
+  
+  <!-- Modules -->
+  
+  
+  <!-- Module PageRank -->
+  
+  <dirname property="module.pagerank.basedir" file="${ant.file}"/>
+  
+  
+  <property name="module.jdk.home.pagerank" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.pagerank" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.pagerank" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.pagerank" value="-encoding UTF-8 -source 1.8 -target 1.8 ${compiler.args}"/>
+  
+  <property name="pagerank.output.dir" value="${module.pagerank.basedir}/out/production/PageRank"/>
+  <property name="pagerank.testoutput.dir" value="${module.pagerank.basedir}/out/test/PageRank"/>
+  
+  <path id="pagerank.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="pagerank.module.production.classpath">
+    <path refid="${module.jdk.classpath.pagerank}"/>
+    <fileset dir="${basedir}/../../../App/hadoop-2.6.0/share/hadoop/common">
+      <patternset refid="library.patterns"/>
+    </fileset>
+    <fileset dir="${basedir}/../../../App/hadoop-2.6.0/share/hadoop/hdfs">
+      <patternset refid="library.patterns"/>
+    </fileset>
+    <pathelement location="${basedir}/../../../App/hadoop-2.6.0/share/hadoop/httpfs"/>
+    <fileset dir="${basedir}/../../../App/hadoop-2.6.0/share/hadoop/mapreduce">
+      <patternset refid="library.patterns"/>
+    </fileset>
+    <fileset dir="${basedir}/../../../App/hadoop-2.6.0/share/hadoop/yarn">
+      <patternset refid="library.patterns"/>
+    </fileset>
+  </path>
+  
+  <path id="pagerank.runtime.production.module.classpath">
+    <pathelement location="${pagerank.output.dir}"/>
+    <fileset dir="${basedir}/../../../App/hadoop-2.6.0/share/hadoop/common">
+      <patternset refid="library.patterns"/>
+    </fileset>
+    <fileset dir="${basedir}/../../../App/hadoop-2.6.0/share/hadoop/hdfs">
+      <patternset refid="library.patterns"/>
+    </fileset>
+    <pathelement location="${basedir}/../../../App/hadoop-2.6.0/share/hadoop/httpfs"/>
+    <fileset dir="${basedir}/../../../App/hadoop-2.6.0/share/hadoop/mapreduce">
+      <patternset refid="library.patterns"/>
+    </fileset>
+    <fileset dir="${basedir}/../../../App/hadoop-2.6.0/share/hadoop/yarn">
+      <patternset refid="library.patterns"/>
+    </fileset>
+  </path>
+  
+  <path id="pagerank.module.classpath">
+    <path refid="${module.jdk.classpath.pagerank}"/>
+    <pathelement location="${pagerank.output.dir}"/>
+    <fileset dir="${basedir}/../../../App/hadoop-2.6.0/share/hadoop/common">
+      <patternset refid="library.patterns"/>
+    </fileset>
+    <fileset dir="${basedir}/../../../App/hadoop-2.6.0/share/hadoop/hdfs">
+      <patternset refid="library.patterns"/>
+    </fileset>
+    <pathelement location="${basedir}/../../../App/hadoop-2.6.0/share/hadoop/httpfs"/>
+    <fileset dir="${basedir}/../../../App/hadoop-2.6.0/share/hadoop/mapreduce">
+      <patternset refid="library.patterns"/>
+    </fileset>
+    <fileset dir="${basedir}/../../../App/hadoop-2.6.0/share/hadoop/yarn">
+      <patternset refid="library.patterns"/>
+    </fileset>
+  </path>
+  
+  <path id="pagerank.runtime.module.classpath">
+    <pathelement location="${pagerank.testoutput.dir}"/>
+    <pathelement location="${pagerank.output.dir}"/>
+    <fileset dir="${basedir}/../../../App/hadoop-2.6.0/share/hadoop/common">
+      <patternset refid="library.patterns"/>
+    </fileset>
+    <fileset dir="${basedir}/../../../App/hadoop-2.6.0/share/hadoop/hdfs">
+      <patternset refid="library.patterns"/>
+    </fileset>
+    <pathelement location="${basedir}/../../../App/hadoop-2.6.0/share/hadoop/httpfs"/>
+    <fileset dir="${basedir}/../../../App/hadoop-2.6.0/share/hadoop/mapreduce">
+      <patternset refid="library.patterns"/>
+    </fileset>
+    <fileset dir="${basedir}/../../../App/hadoop-2.6.0/share/hadoop/yarn">
+      <patternset refid="library.patterns"/>
+    </fileset>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.pagerank">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.pagerank">
+    <patternset refid="excluded.from.module.pagerank"/>
+  </patternset>
+  
+  <path id="pagerank.module.sourcepath">
+    <dirset dir="${module.pagerank.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.pagerank" depends="compile.module.pagerank.production,compile.module.pagerank.tests" description="Compile module PageRank"/>
+  
+  <target name="compile.module.pagerank.production" depends="register.custom.compilers" description="Compile module PageRank; production classes">
+    <mkdir dir="${pagerank.output.dir}"/>
+    <javac2 destdir="${pagerank.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.pagerank}/javac">
+      <compilerarg line="${compiler.args.pagerank}"/>
+      <bootclasspath refid="pagerank.module.bootclasspath"/>
+      <classpath refid="pagerank.module.production.classpath"/>
+      <src refid="pagerank.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.pagerank"/>
+    </javac2>
+    
+    <copy todir="${pagerank.output.dir}">
+      <fileset dir="${module.pagerank.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.pagerank.tests" depends="register.custom.compilers,compile.module.pagerank.production" description="compile module PageRank; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.pagerank" description="cleanup module">
+    <delete dir="${pagerank.output.dir}"/>
+    <delete dir="${pagerank.testoutput.dir}"/>
+  </target>
+  
+  <target name="init" description="Build initialization">
+    <!-- Perform any build initialization in this target -->
+  </target>
+  
+  <target name="clean" depends="clean.module.pagerank" description="cleanup all"/>
+  
+  <target name="build.modules" depends="init, clean, compile.module.pagerank" description="build all modules"/>
+  
+  <target name="init.artifacts">
+    <property name="artifacts.temp.dir" value="${basedir}/__artifacts_temp"/>
+    <property name="artifact.output.pagerank:jar" value="${basedir}/out/artifacts/PageRank_jar"/>
+    <mkdir dir="${artifacts.temp.dir}"/>
+    <property name="temp.jar.path.PageRank.jar" value="${artifacts.temp.dir}/PageRank.jar"/>
+  </target>
+  
+  <target name="artifact.pagerank:jar" depends="init.artifacts, compile.module.pagerank" description="Build &#39;PageRank:jar&#39; artifact">
+    <property name="artifact.temp.output.pagerank:jar" value="${artifacts.temp.dir}/PageRank_jar"/>
+    <mkdir dir="${artifact.temp.output.pagerank:jar}"/>
+    <jar destfile="${temp.jar.path.PageRank.jar}" duplicate="preserve" filesetmanifest="mergewithoutmain">
+      <zipfileset dir="${pagerank.output.dir}"/>
+      <zipfileset dir="${basedir}/../../../App/hadoop-2.6.0/share/hadoop/httpfs"/>
+      <zipfileset src="${basedir}/../../../App/hadoop-2.6.0/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.6.0.jar"/>
+      <zipfileset src="${basedir}/../../../App/hadoop-2.6.0/share/hadoop/mapreduce/hadoop-mapreduce-client-hs-2.6.0.jar"/>
+      <zipfileset src="${basedir}/../../../App/hadoop-2.6.0/share/hadoop/mapreduce/hadoop-mapreduce-client-app-2.6.0.jar"/>
+      <zipfileset src="${basedir}/../../../App/hadoop-2.6.0/share/hadoop/mapreduce/hadoop-mapreduce-client-core-2.6.0.jar"/>
+      <zipfileset src="${basedir}/../../../App/hadoop-2.6.0/share/hadoop/mapreduce/hadoop-mapreduce-client-common-2.6.0.jar"/>
+      <zipfileset src="${basedir}/../../../App/hadoop-2.6.0/share/hadoop/mapreduce/hadoop-mapreduce-client-shuffle-2.6.0.jar"/>
+      <zipfileset src="${basedir}/../../../App/hadoop-2.6.0/share/hadoop/mapreduce/hadoop-mapreduce-client-jobclient-2.6.0.jar"/>
+      <zipfileset src="${basedir}/../../../App/hadoop-2.6.0/share/hadoop/mapreduce/hadoop-mapreduce-client-hs-plugins-2.6.0.jar"/>
+      <zipfileset src="${basedir}/../../../App/hadoop-2.6.0/share/hadoop/mapreduce/hadoop-mapreduce-client-jobclient-2.6.0-tests.jar"/>
+      <zipfileset src="${basedir}/../../../App/hadoop-2.6.0/share/hadoop/common/hadoop-nfs-2.6.0.jar"/>
+      <zipfileset src="${basedir}/../../../App/hadoop-2.6.0/share/hadoop/common/hadoop-common-2.6.0.jar"/>
+      <zipfileset src="${basedir}/../../../App/hadoop-2.6.0/share/hadoop/common/hadoop-common-2.6.0-tests.jar"/>
+      <zipfileset src="${basedir}/../../../App/hadoop-2.6.0/share/hadoop/yarn/hadoop-yarn-api-2.6.0.jar"/>
+      <zipfileset src="${basedir}/../../../App/hadoop-2.6.0/share/hadoop/yarn/hadoop-yarn-client-2.6.0.jar"/>
+      <zipfileset src="${basedir}/../../../App/hadoop-2.6.0/share/hadoop/yarn/hadoop-yarn-common-2.6.0.jar"/>
+      <zipfileset src="${basedir}/../../../App/hadoop-2.6.0/share/hadoop/yarn/hadoop-yarn-registry-2.6.0.jar"/>
+      <zipfileset src="${basedir}/../../../App/hadoop-2.6.0/share/hadoop/yarn/hadoop-yarn-server-tests-2.6.0.jar"/>
+      <zipfileset src="${basedir}/../../../App/hadoop-2.6.0/share/hadoop/yarn/hadoop-yarn-server-common-2.6.0.jar"/>
+      <zipfileset src="${basedir}/../../../App/hadoop-2.6.0/share/hadoop/yarn/hadoop-yarn-server-web-proxy-2.6.0.jar"/>
+      <zipfileset src="${basedir}/../../../App/hadoop-2.6.0/share/hadoop/yarn/hadoop-yarn-server-nodemanager-2.6.0.jar"/>
+      <zipfileset src="${basedir}/../../../App/hadoop-2.6.0/share/hadoop/yarn/hadoop-yarn-server-resourcemanager-2.6.0.jar"/>
+      <zipfileset src="${basedir}/../../../App/hadoop-2.6.0/share/hadoop/yarn/hadoop-yarn-applications-distributedshell-2.6.0.jar"/>
+      <zipfileset src="${basedir}/../../../App/hadoop-2.6.0/share/hadoop/yarn/hadoop-yarn-server-applicationhistoryservice-2.6.0.jar"/>
+      <zipfileset src="${basedir}/../../../App/hadoop-2.6.0/share/hadoop/yarn/hadoop-yarn-applications-unmanaged-am-launcher-2.6.0.jar"/>
+      <zipfileset src="${basedir}/../../../App/hadoop-2.6.0/share/hadoop/hdfs/hadoop-hdfs-2.6.0.jar"/>
+      <zipfileset src="${basedir}/../../../App/hadoop-2.6.0/share/hadoop/hdfs/hadoop-hdfs-nfs-2.6.0.jar"/>
+      <zipfileset src="${basedir}/../../../App/hadoop-2.6.0/share/hadoop/hdfs/hadoop-hdfs-2.6.0-tests.jar"/>
+    </jar>
+    <copy file="${temp.jar.path.PageRank.jar}" tofile="${artifact.temp.output.pagerank:jar}/PageRank.jar"/>
+  </target>
+  
+  <target name="build.all.artifacts" depends="artifact.pagerank:jar" description="Build all artifacts">
+    <mkdir dir="${artifact.output.pagerank:jar}"/>
+    <copy todir="${artifact.output.pagerank:jar}">
+      <fileset dir="${artifact.temp.output.pagerank:jar}"/>
+    </copy>
+    
+    <!-- Delete temporary files -->
+    <delete dir="${artifacts.temp.dir}"/>
+  </target>
+  
+  <target name="all" depends="build.modules, build.all.artifacts" description="build all"/>
+</project>
