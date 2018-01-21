@@ -7,6 +7,10 @@ import org.apache.hadoop.mapreduce.Mapper;
 
 import java.io.IOException;
 
+/**
+ * @author Izzati Alvandiar     <al.vandiar@gmail.com>
+ */
+
 public class FirstJobMapper extends Mapper<LongWritable, Text, Text, Text> {
 
     /**
@@ -20,11 +24,6 @@ public class FirstJobMapper extends Mapper<LongWritable, Text, Text, Text> {
      * We will also collect all the distinct nodes in our graph: this is needed to compute the initial
      * pagerank value in Job #1 reducer and also in later jobs.
      *
-     * @param key
-     * @param value
-     * @param context
-     * @throws IOException
-     * @throws InterruptedException
      */
 
     @Override

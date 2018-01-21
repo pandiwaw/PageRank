@@ -7,6 +7,10 @@ import org.apache.hadoop.mapreduce.Mapper;
 
 import java.io.IOException;
 
+/**
+ * @author Izzati Alvandiar     <al.vandiar@gmail.com>
+ */
+
 public class ThirdJobMapper extends Mapper<LongWritable, Text, DoubleWritable, Text> {
 
     /**
@@ -19,11 +23,6 @@ public class ThirdJobMapper extends Mapper<LongWritable, Text, DoubleWritable, T
      * We will map the pagerank (key) to its value (page) and Hadoop will do the sorting keys for us.
      * There is no need to implement a reducer: the mapping and sorting is enough for our purpose.
      *
-     * @param key
-     * @param value
-     * @param context
-     * @throws IOException
-     * @throws InterruptedException
      */
 
     @Override

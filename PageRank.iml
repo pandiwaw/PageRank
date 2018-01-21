@@ -6,7 +6,6 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
-    <orderEntry type="library" name="hadoop-dist-2.6.0" level="project" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>

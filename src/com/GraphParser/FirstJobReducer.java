@@ -6,6 +6,10 @@ import org.apache.hadoop.mapreduce.Reducer;
 
 import java.io.IOException;
 
+/**
+ * @author Izzati Alvandiar     <al.vandiar@gmail.com>
+ */
+
 public class FirstJobReducer extends Reducer<Text, Text, Text, Text> {
 
     /**
@@ -18,26 +22,21 @@ public class FirstJobReducer extends Reducer<Text, Text, Text, Text> {
      * however later versions of PageRank assume a probability distribution between 0 and 1, hence the
      * initial value is set to DAMPING FACTOR / TOTAL_NODES for each node in the graph.
      *
-     * @param key
-     * @param values
-     * @param context
-     * @throws IOException
-     * @throws InterruptedException
      */
 
     @Override
     protected void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
         boolean first = true;
-        String links = (Main.DAMPING / Main.NODES.size()) + "\t";
+        StringBuilder links = new StringBuilder((Main.DAMPING / Main.NODES.size()) + "\t");
 
         for(Text value : values) {
             if(! first) {
-                links += ",";
+                links.append(",");
             }
-            links += value.toString();
+            links.append(value.toString());
             first = false;
         }
 
-        context.write(key, new Text(links));
+        context.write(key, new Text(links.toString()));
     }
 }

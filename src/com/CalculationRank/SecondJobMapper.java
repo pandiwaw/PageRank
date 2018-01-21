@@ -7,6 +7,10 @@ import org.apache.hadoop.mapreduce.Mapper;
 
 import java.io.IOException;
 
+/**
+ * @author Izzati Alvandiar     <al.vandiar@gmail.com>
+ */
+
 public class SecondJobMapper extends Mapper<LongWritable, Text, Text, Text> {
 
     /**
@@ -25,12 +29,6 @@ public class SecondJobMapper extends Mapper<LongWritable, Text, Text, Text> {
      *
      *      <link>  <page-rank>  <total-links>
      *
-     *
-     * @param key
-     * @param value
-     * @param context
-     * @throws IOException
-     * @throws InterruptedException
      */
 
     @Override

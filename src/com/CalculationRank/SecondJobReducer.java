@@ -6,6 +6,10 @@ import org.apache.hadoop.mapreduce.Reducer;
 
 import java.io.IOException;
 
+/**
+ * @author Izzati Alvandiar     <al.vandiar@gmail.com>
+ */
+
 public class SecondJobReducer extends Reducer<Text, Text, Text, Text> {
 
     /**
@@ -21,16 +25,11 @@ public class SecondJobReducer extends Reducer<Text, Text, Text, Text> {
      *
      *      <link>  <page-rank>  <total-links>
      *
-     * @param key
-     * @param values
-     * @param context
-     * @throws IOException
-     * @throws InterruptedException
      */
 
     @Override
     protected void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
-        String links = "";
+        StringBuilder links = new StringBuilder();
         double sumShareOtherPageRanks = 0.0;
 
         for(Text value : values) {
@@ -40,7 +39,7 @@ public class SecondJobReducer extends Reducer<Text, Text, Text, Text> {
                 // if this value contain node links append them to the 'links' string
                 // for future use: this is needed to reconstruct the input for Job#2 Mapper
                 // in case of multiple iterations of it.
-                links += content.substring(Main.LINKS_SEPARATOR.length());
+                links.append(content.substring(Main.LINKS_SEPARATOR.length()));
             } else {
                 String[] split = content.split("\\t");
 

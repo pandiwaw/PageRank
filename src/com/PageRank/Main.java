@@ -22,6 +22,10 @@ import java.text.NumberFormat;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * @author Izzati Alvandiar     <al.vandiar@gmail.com>
+ */
+
 public class Main {
 
     // arguments key
@@ -41,15 +45,15 @@ public class Main {
     private static final String KEY_HELP_ALIAS = "-h";
 
     // utility attributes
-    public static NumberFormat NF = new DecimalFormat("00");
-    public static Set<String> NODES = new HashSet<String>();
+    private static NumberFormat NF = new DecimalFormat("00");
+    public static Set<String> NODES = new HashSet<>();
     public static String LINKS_SEPARATOR = "|";
 
     // configuration values
     public static Double DAMPING = 0.85;
-    public static int ITERATIONS = 2;
-    public static String INPUT = "";
-    public static String OUTPUT = "";
+    private static int ITERATIONS = 2;
+    private static String INPUT = "";
+    private static String OUTPUT = "";
 
 
     /**
@@ -67,23 +71,33 @@ public class Main {
                 String key = args[i];
                 String value = args[i + 1];
 
-                if(key.equals(KEY_DAMPING) || key.equals(KEY_DAMPING_ALIAS)) {
-                    // damping factor is in the interval [0..1]
-                    Main.DAMPING = Math.max(Math.min(Double.parseDouble(value), 1.0), 0.0);
-                } else if(key.equals(KEY_COUNT) || key.equals(KEY_COUNT_ALIAS)) {
-                    // at least 1 iteration
-                    Main.ITERATIONS = Math.max(Integer.parseInt(value), 1);
-                } else if(key.equals(KEY_INPUT) || key.equals(KEY_INPUT_ALIAS)) {
-                    Main.INPUT = value.trim();
-                    if(Main.INPUT.charAt(Main.INPUT.length() - 1) == '/')
-                        Main.INPUT = Main.INPUT.substring(0, Main.INPUT.length() - 1);
-                } else if(key.equals(KEY_OUTPUT) || key.equals(KEY_OUTPUT_ALIAS)) {
-                    Main.OUTPUT = value.trim();
-                    if(Main.OUTPUT.charAt(Main.OUTPUT.length() - 1) == '/')
-                        Main.OUTPUT = Main.OUTPUT.substring(0, Main.INPUT.length() - 1);
-                } else if(key.equals(KEY_HELP) || key.equals(KEY_HELP_ALIAS)) {
-                    debugMessage(null);
-                    System.exit(0);
+                switch (key) {
+                    case KEY_DAMPING:
+                    case KEY_DAMPING_ALIAS:
+                        // damping factor is in the interval [0..1]
+                        Main.DAMPING = Math.max(Math.min(Double.parseDouble(value), 1.0), 0.0);
+                        break;
+                    case KEY_COUNT:
+                    case KEY_COUNT_ALIAS:
+                        // at least 1 iteration
+                        Main.ITERATIONS = Math.max(Integer.parseInt(value), 1);
+                        break;
+                    case KEY_INPUT:
+                    case KEY_INPUT_ALIAS:
+                        Main.INPUT = value.trim();
+                        if (Main.INPUT.charAt(Main.INPUT.length() - 1) == '/')
+                            Main.INPUT = Main.INPUT.substring(0, Main.INPUT.length() - 1);
+                        break;
+                    case KEY_OUTPUT:
+                    case KEY_OUTPUT_ALIAS:
+                        Main.OUTPUT = value.trim();
+                        if (Main.OUTPUT.charAt(Main.OUTPUT.length() - 1) == '/')
+                            Main.OUTPUT = Main.OUTPUT.substring(0, Main.INPUT.length() - 1);
+                        break;
+                    case KEY_HELP:
+                    case KEY_HELP_ALIAS:
+                        debugMessage(null);
+                        System.exit(0);
                 }
             }
         } catch(ArrayIndexOutOfBoundsException | NumberFormatException e) {
@@ -148,13 +162,10 @@ public class Main {
      *
      * @param input         the directory of the input data
      * @param output        the main directory of the output
-     * @return
-     * @throws IOException
-     * @throws ClassNotFoundException
-     * @throws InterruptedException
+     *
      */
 
-    public boolean parseGraph(String input, String output) throws IOException, ClassNotFoundException, InterruptedException {
+    private boolean parseGraph(String input, String output) throws IOException, ClassNotFoundException, InterruptedException {
         Job job = Job.getInstance(new Configuration(), "Job #1");
         job.setJarByClass(Main.class);
 
@@ -182,13 +193,10 @@ public class Main {
      *
      * @param input         the directory of the input data
      * @param output        the main directory of the output
-     * @return
-     * @throws IOException
-     * @throws ClassNotFoundException
-     * @throws InterruptedException
+     *
      */
 
-    public boolean calculateRank(String input, String output) throws IOException, ClassNotFoundException, InterruptedException {
+    private boolean calculateRank(String input, String output) throws IOException, ClassNotFoundException, InterruptedException {
         Job job = Job.getInstance(new Configuration(), "Job #2");
         job.setJarByClass(Main.class);
 
@@ -215,13 +223,10 @@ public class Main {
      *
      * @param input         the directory of the input data
      * @param output        the main directory of the output
-     * @return
-     * @throws IOException
-     * @throws ClassNotFoundException
-     * @throws InterruptedException
+     *
      */
 
-    public boolean orderRank(String input, String output) throws IOException, ClassNotFoundException, InterruptedException {
+    private boolean orderRank(String input, String output) throws IOException, ClassNotFoundException, InterruptedException {
         Job job = Job.getInstance(new Configuration(), "Job #3");
         job.setJarByClass(Main.class);
 
@@ -246,7 +251,7 @@ public class Main {
      * @param error     optional error message to display
      */
 
-    public static void debugMessage(String error) {
+    private static void debugMessage(String error) {
         if(error != null) {
             System.err.println("[ERROR]: " + error + ".\n");
         }
