@@ -7,9 +7,9 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.pagerank.calculation;
+package com.pagerank.ranker;
 
-import com.pagerank.Main;
+import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
@@ -17,27 +17,22 @@ import org.apache.hadoop.mapreduce.Mapper;
 import java.io.IOException;
 
 /**
+ * Order ranks
  * @author Izzati Alvandiar     <al.vandiar@gmail.com>
  * @version 0.1
  */
 
-public class SecondJobMapper extends Mapper<LongWritable, Text, Text, Text> {
+public class ThirdJobMapper extends Mapper<LongWritable, Text, DoubleWritable, Text> {
 
     /**
-     * PageRank Calculation algorithm (Mapper)
+     * Rank Ordering (Mapper only)
      * Input file format (separator is TAB):
      *
      *      <title> <page-rank> <link1>,<link2>,<link3>,...,<linkN>
      *
-     * Output has two kind of records:
-     * One record composed by the collection of links of each page:
-     *
-     *      <title> | <link1>,<link2>,<link3>,...,<linkN>
-     *
-     * Another record composed by linked page, the page rank of the source page
-     * and total amount of out links of the source page:
-     *
-     *      <link>  <page-rank>  <total-links>
+     * This is simple job which does the ordering of our documents according to the computed pagerank.
+     * We will map the pagerank (key) to its value (page) and Hadoop will do the sorting keys for us.
+     * There is no need to implement a reducer: the mapping and sorting is enough for our purpose.
      *
      */
 
@@ -48,16 +43,8 @@ public class SecondJobMapper extends Mapper<LongWritable, Text, Text, Text> {
 
         // extract tokens from the current line
         String page = Text.decode(value.getBytes(), 0, tIdx1);
-        String pageRank = Text.decode(value.getBytes(), tIdx1 + 1, tIdx2 - (tIdx1 + 1));
-        String links = Text.decode(value.getBytes(), tIdx2 + 1, value.getLength() - (tIdx2 + 1));
+        float pageRank = Float.parseFloat(Text.decode(value.getBytes(), tIdx1 + 1, tIdx2 - (tIdx1 + 1)));
 
-        String[] allOtherPages = links.split(",");
-        for(String otherPage : allOtherPages) {
-            Text pageRankWithTotalLinks = new Text(pageRank + "\t" + allOtherPages.length);
-            context.write(new Text(otherPage), pageRankWithTotalLinks);
-        }
-
-        // put the original links so the reducer is able to produce the correct output.
-        context.write(new Text(page), new Text(Main.LINKS_SEPARATOR + links));
+        context.write(new DoubleWritable(pageRank), new Text(page));
     }
 }
